@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { Search, BadgeAlert } from "lucide-react"
+import { Search, BadgeAlert, Check } from "lucide-react"
 
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -32,6 +32,25 @@ const CHUNK_SIZE = 100
 
 export function EpisodesSidebar({ videos, season, episode, type, id, fallbackPoster }: EpisodesSidebarProps) {
   const [searchQuery, setSearchQuery] = React.useState("")
+  const [watchedSet, setWatchedSet] = React.useState<Set<string>>(new Set())
+
+  // Load and update watched episodes history for this show
+  React.useEffect(() => {
+    try {
+      const storageKey = `aniverse_episodes_${id}`
+      const raw = localStorage.getItem(storageKey)
+      const currentKey = `${season}-${episode}`
+      let set = new Set<string>()
+      if (raw) {
+        set = new Set(JSON.parse(raw))
+      }
+      set.add(currentKey)
+      localStorage.setItem(storageKey, JSON.stringify(Array.from(set)))
+      setWatchedSet(set)
+    } catch (e) {
+      console.error("Failed to update watched episodes:", e)
+    }
+  }, [id, season, episode])
   
   // Sort all videos chronologically by season and then episode
   const sortedAllVideos = React.useMemo(() => {
@@ -248,6 +267,7 @@ export function EpisodesSidebar({ videos, season, episode, type, id, fallbackPos
           ) : (
             displayedEpisodes.map((vid) => {
               const isActive = vid.season === season && vid.episode === episode
+              const isWatched = watchedSet.has(`${vid.season}-${vid.episode}`)
               const poster = vid.thumbnail
               const epDisplayNum = useChunking ? vid.absoluteNumber : vid.episode
               const epTitle = vid.name || vid.title || `Episode ${epDisplayNum}`
@@ -269,8 +289,15 @@ export function EpisodesSidebar({ videos, season, episode, type, id, fallbackPos
                     isActive={isActive}
                   />
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs text-muted-foreground mb-0.5 font-semibold">
-                      {vid.season === 0 ? "Special" : `Episode ${epDisplayNum}`}
+                    <div className="flex items-center justify-between gap-1.5 mb-0.5">
+                      <span className="text-xs text-muted-foreground font-semibold">
+                        {vid.season === 0 ? "Special" : `Episode ${epDisplayNum}`}
+                      </span>
+                      {isWatched && !isActive && (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">
+                          <Check className="w-2.5 h-2.5" /> Watched
+                        </span>
+                      )}
                     </div>
                     <div className={`text-xs sm:text-sm font-medium line-clamp-2 leading-tight ${isActive ? "text-primary font-bold" : ""}`}>
                       {epTitle}

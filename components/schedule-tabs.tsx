@@ -15,6 +15,29 @@ interface ScheduleTabsProps {
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
+function getCountdown(timeStr?: string | null): string | null {
+  if (!timeStr) return null
+  const parts = timeStr.split(":")
+  if (parts.length < 2) return null
+  const targetHour = parseInt(parts[0])
+  const targetMin = parseInt(parts[1])
+  if (isNaN(targetHour) || isNaN(targetMin)) return null
+
+  const now = new Date()
+  const target = new Date()
+  target.setHours(targetHour, targetMin, 0, 0)
+
+  const diffMs = target.getTime() - now.getTime()
+  if (diffMs <= 0 && diffMs > -3600000) {
+    return "🔴 Airing Now"
+  } else if (diffMs > 0 && diffMs < 86400000) {
+    const hours = Math.floor(diffMs / 3600000)
+    const mins = Math.floor((diffMs % 3600000) / 60000)
+    return `⏱️ In ${hours > 0 ? `${hours}h ` : ""}${mins}m`
+  }
+  return null
+}
+
 export function ScheduleTabs({ initialGrouped }: ScheduleTabsProps) {
   const [activeDay, setActiveDay] = React.useState("")
   const [reminders, setReminders] = React.useState<number[]>([])
@@ -191,9 +214,16 @@ export function ScheduleTabs({ initialGrouped }: ScheduleTabsProps) {
                     <h3 className="font-bold text-sm sm:text-base text-white line-clamp-1 group-hover:text-primary transition-colors">
                       {show.title}
                     </h3>
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <Clock className="w-3.5 h-3.5 text-primary" />
-                      <span className="line-clamp-1">{broadcastStr}</span>
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-primary" />
+                        <span className="line-clamp-1">{broadcastStr}</span>
+                      </div>
+                      {activeDay === todayName && getCountdown(show.broadcast?.time) && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 animate-pulse">
+                          {getCountdown(show.broadcast?.time)}
+                        </span>
+                      )}
                     </div>
                     {show.synopsis && (
                       <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">
