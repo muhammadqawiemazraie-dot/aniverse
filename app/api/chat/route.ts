@@ -338,6 +338,10 @@ I can answer **anything** you ask! Try asking:
     const wantAnime = cleanQuery.includes("anime")
     const isFollowUpRec = /(other than|different|something else|give me more|another|besides|else|instead|others)/i.test(cleanQuery)
 
+    // Parse how many the user asked for (e.g. "suggest me 10 movie" → 10). Default 5, max 20.
+    const countMatch = cleanQuery.match(/\b(\d+)\b/)
+    const requestedCount = countMatch ? Math.min(parseInt(countMatch[1], 10), 20) : 5
+
     const [movies, series] = await Promise.all([
       fetchTrendingMovies().catch(() => []),
       fetchTrendingSeries().catch(() => []),
@@ -357,7 +361,7 @@ I can answer **anything** you ask! Try asking:
     if (displayMovies.length > 0) {
       const label = wantAnime ? "🎬 Anime Movies:" : "🎬 Recommended Movies:"
       response += `${label}\n`
-      displayMovies.slice(0, wantMovie ? 5 : 4).forEach(m => {
+      displayMovies.slice(0, wantMovie ? requestedCount : Math.ceil(requestedCount / 2)).forEach(m => {
         response += `* [${m.name}](/watch/movie/${m.id}) — ⭐ ${m.imdbRating || "N/A"} (${m.releaseInfo || "N/A"})\n`
       })
       response += "\n"
@@ -365,7 +369,7 @@ I can answer **anything** you ask! Try asking:
 
     if (!wantMovie && displaySeries.length > 0) {
       response += `📺 TV Series & Anime:\n`
-      displaySeries.slice(0, wantAnime ? 5 : 3).forEach(s => {
+      displaySeries.slice(0, wantAnime ? requestedCount : Math.floor(requestedCount / 2)).forEach(s => {
         response += `* [${s.name}](/watch/series/${s.id}) — ⭐ ${s.imdbRating || "N/A"} (${s.releaseInfo || "N/A"})\n`
       })
       response += "\n"
@@ -571,7 +575,8 @@ CRITICAL ANSWER GUIDELINES:
    - If the user asks for movies/shows similar to a title (e.g. "is there any movie like Interstellar?", "shows like Naruto"), provide a list of top similar movies or anime with working stream links!
    - If the user asks to explain a specific title (e.g. "explain to me about interstellar movie"), provide a detailed plot summary, rating, genres, and stream link!
 2. For recommendations:
-   - Give 3-5 suggestions formatted with working stream links.
+   - Give EXACTLY the number of suggestions the user asked for (e.g. if they say "10 movies", give 10). If no number is specified, give 5.
+   - Always format with working stream links.
 3. Keep responses clear, helpful, and concise.`
 
     let lastError = ""
