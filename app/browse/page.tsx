@@ -203,7 +203,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
     results = deduplicated.filter((item) => {
       // 1. Media Type specific checks
       if (item.type === "series" || item.type === "movie") {
-        const isAnimation = item.genres?.includes("Animation")
+        const isAnimation = item.genres?.includes("Animation") || item.genres?.includes("Anime")
         if (type === "anime" && !isAnimation) return false
         if (type === "series" && isAnimation) return false
       }
