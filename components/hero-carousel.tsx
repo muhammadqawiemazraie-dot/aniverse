@@ -8,7 +8,6 @@ import type { CinemetaMeta } from "@/lib/cinemeta"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { SmartImage } from "@/components/smart-image"
-import { ParticleBackground } from "@/components/particle-background"
 
 interface HeroCarouselProps {
   movies: CinemetaMeta[]
@@ -59,9 +58,6 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/65 to-black/10" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
       </div>
-
-      {/* Particle overlay */}
-      <ParticleBackground />
 
       {/* Content */}
       <div

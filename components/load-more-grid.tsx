@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Loader2, ChevronDown } from "lucide-react"
 import { MediaCard } from "@/components/media-card"
+import { SkeletonCard } from "@/components/skeleton-card"
 import { Button } from "@/components/ui/button"
 import type { CinemetaMeta } from "@/lib/cinemeta"
 
@@ -54,29 +55,32 @@ export function LoadMoreGrid({ initialItems, type }: LoadMoreGridProps) {
             imdbRating={item.imdbRating}
           />
         ))}
+        {/* Skeleton placeholders while loading more — prevents layout pop-in */}
+        {loading && Array.from({ length: 10 }).map((_, i) => (
+          <SkeletonCard key={`skel-${i}`} />
+        ))}
       </div>
 
-      {hasMore && (
+      {hasMore && !loading && (
         <div className="flex justify-center">
           <Button
             variant="outline"
             size="lg"
             onClick={loadMore}
-            disabled={loading}
             className="gap-2 rounded-full border-border/60 hover:border-primary/60 hover:text-primary transition-all px-8"
           >
-            {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Loading...
-              </>
-            ) : (
-              <>
-                <ChevronDown className="w-4 h-4" />
-                Load More
-              </>
-            )}
+            <ChevronDown className="w-4 h-4" />
+            Load More
           </Button>
+        </div>
+      )}
+
+      {loading && (
+        <div className="flex justify-center">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Loading more...
+          </div>
         </div>
       )}
     </div>
