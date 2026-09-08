@@ -48,7 +48,7 @@ unlocks features like Watchlist, Watch Party, progress tracking, and personalize
 - Click the bell 🔔 icon to set browser notification reminders for when a show airs
 
 ## Genres Available
-Movies & Series: Action, Adventure, Animation, Comedy, Crime, Documentary, Drama, Fantasy, Horror, Mystery, Romance, Sci-Fi, Thriller, Western, Family, History, Music, Sport, War
+Movies & Series: Action, Adventure, Animation, Anime, Comedy, Crime, Documentary, Drama, Fantasy, Horror, Mystery, Romance, Sci-Fi, Thriller, Western, Family, History, Music, Sport, War
 
 ## Theme & Customization
 - Light / Dark / System mode toggle (sun/moon icon in navbar)

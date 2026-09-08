@@ -31,6 +31,37 @@ export interface CinemetaVideo {
   name?: string
 }
 
+export function isAnimeTitle(meta: Partial<CinemetaMeta>): boolean {
+  if (!meta) return false
+  if (meta.genres?.includes("Anime")) return true
+  const isAnimated = meta.genres?.includes("Animation")
+  if (!isAnimated) return false
+
+  const text = `${meta.name || ""} ${meta.description || ""} ${meta.awards || ""}`.toLowerCase()
+
+  const animeKeywords = [
+    "anime", "manga", "japanese", "japan", "ova", "jikan", "myanimelist", "mal",
+    "shounen", "shonen", "seinen", "shoujo", "isekai", "mecha", "tokyo",
+    "bleach", "naruto", "one piece", "titan", "kaisen", "slayer", "dragon ball",
+    "ghoul", "alchemist", "hunter x hunter", "frieren", "solo leveling", "evangelion",
+    "gundam", "jojo", "ghibli", "boruto", "pokemon", "digimon", "yugioh", "berserk",
+    "clover", "dr. stone", "fire force", "slam dunk", "conan", "inuyasha", "punch man",
+    "mob psycho", "re:zero", "overlord", "konosuba", "fate/", "hero academia", "death note",
+    "chainsaw man", "sword art", "spy x family", "steins;gate", "vinland", "haikyu",
+    "code geass", "fairy tail", "cowboy bebop", "sailor moon", "blue lock", "subbed", "dubbed"
+  ]
+
+  if (animeKeywords.some(kw => text.includes(kw))) return true
+
+  const westernKeywords = ["simpsons", "family guy", "spongebob", "south park", "looney tunes", "pixar", "disney", "dreamworks", "nickelodeon", "rick and morty", "futurama", "avatar: the last airbender"]
+  const isWestern = westernKeywords.some(kw => text.includes(kw))
+  if (!isWestern && (meta.type === "series" || meta.type === "anime")) {
+    return true
+  }
+
+  return false
+}
+
 function sanitizeMeta(meta: CinemetaMeta): CinemetaMeta {
   if (!meta) return meta
   let poster = meta.poster
@@ -43,8 +74,14 @@ function sanitizeMeta(meta: CinemetaMeta): CinemetaMeta {
     poster = `https://images.metahub.space/poster/small/${meta.id}/img`
   }
 
+  let genres = meta.genres ? [...meta.genres] : []
+  if (isAnimeTitle(meta) && !genres.includes("Anime")) {
+    genres.push("Anime")
+  }
+
   return {
     ...meta,
+    genres: genres.length > 0 ? genres : meta.genres,
     poster: poster || undefined
   }
 }
@@ -75,9 +112,10 @@ export async function fetchTrendingSeries(skip?: number) {
 }
 
 export async function fetchByGenre(type: 'movie' | 'series', genre: string, skip?: number) {
+  const queryGenre = genre === "Anime" ? "Animation" : genre
   const url = skip
-    ? `${CINEMETA_API_URL}/catalog/${type}/top/genre=${encodeURIComponent(genre)}&skip=${skip}.json`
-    : `${CINEMETA_API_URL}/catalog/${type}/top/genre=${encodeURIComponent(genre)}.json`
+    ? `${CINEMETA_API_URL}/catalog/${type}/top/genre=${encodeURIComponent(queryGenre)}&skip=${skip}.json`
+    : `${CINEMETA_API_URL}/catalog/${type}/top/genre=${encodeURIComponent(queryGenre)}.json`
   const res = await fetch(url, { next: { revalidate: 3600 } })
   if (!res.ok) throw new Error(`Failed to fetch ${type} by genre`)
   const data = await res.json()
@@ -111,7 +149,8 @@ export async function fetchCinemetaDetails(type: 'movie' | 'series', id: string)
 
 export async function fetchSimilar(type: 'movie' | 'series', genre: string) {
   try {
-    const res = await fetch(`${CINEMETA_API_URL}/catalog/${type}/top/genre=${encodeURIComponent(genre)}.json`, { next: { revalidate: 3600 } })
+    const queryGenre = genre === "Anime" ? "Animation" : genre
+    const res = await fetch(`${CINEMETA_API_URL}/catalog/${type}/top/genre=${encodeURIComponent(queryGenre)}.json`, { next: { revalidate: 3600 } })
     if (!res.ok) return []
     const data = await res.json()
     return sanitizeMetas((data.metas as CinemetaMeta[]).slice(0, 12))
@@ -121,7 +160,7 @@ export async function fetchSimilar(type: 'movie' | 'series', genre: string) {
 }
 
 export const ALL_GENRES = [
-  "Action", "Adventure", "Animation", "Comedy", "Crime",
+  "Action", "Adventure", "Animation", "Anime", "Comedy", "Crime",
   "Documentary", "Drama", "Fantasy", "Horror", "Mystery",
   "Romance", "Sci-Fi", "Thriller", "Western", "Family",
   "History", "Music", "Sport", "War"

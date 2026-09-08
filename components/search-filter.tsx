@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 
 const GENRES = [
   "Action", "Adventure", "Comedy", "Drama", "Fantasy", 
-  "Horror", "Romance", "Sci-Fi", "Thriller", "Animation"
+  "Horror", "Romance", "Sci-Fi", "Thriller", "Animation", "Anime"
 ]
 
 const DECADES = [

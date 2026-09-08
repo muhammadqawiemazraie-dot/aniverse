@@ -6,6 +6,7 @@ const GENRE_EMOJIS: Record<string, string> = {
   "Action": "💥",
   "Adventure": "🗺️",
   "Animation": "🎨",
+  "Anime": "🎌",
   "Comedy": "😂",
   "Crime": "🔫",
   "Documentary": "🎬",

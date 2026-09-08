@@ -64,7 +64,7 @@ const GENRE_COLORS: Record<string, string> = {
   Action: "from-red-600/20", Adventure: "from-orange-500/20", Comedy: "from-yellow-500/20",
   Drama: "from-blue-600/20", Horror: "from-purple-800/20", Romance: "from-pink-500/20",
   "Sci-Fi": "from-cyan-600/20", Thriller: "from-gray-700/20", Animation: "from-green-500/20",
-  Fantasy: "from-violet-600/20", Crime: "from-slate-600/20", Mystery: "from-indigo-600/20",
+  Anime: "from-pink-500/20", Fantasy: "from-violet-600/20", Crime: "from-slate-600/20", Mystery: "from-indigo-600/20",
   Documentary: "from-amber-600/20", Music: "from-fuchsia-500/20",
 }
 
