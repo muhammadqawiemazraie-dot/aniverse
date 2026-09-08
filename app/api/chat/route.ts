@@ -335,44 +335,52 @@ I can answer **anything** you ask! Try asking:
   // 9. EXPLICIT RECOMMENDATIONS / SUGGESTIONS
   try {
     const wantMovie = cleanQuery.includes("movie") || cleanQuery.includes("film")
-    const wantAnime = cleanQuery.includes("anime")
+    const wantAnime = cleanQuery.includes("anime") || cleanQuery.includes("animation") || cleanQuery.includes("cartoon")
     const isFollowUpRec = /(other than|different|something else|give me more|another|besides|else|instead|others)/i.test(cleanQuery)
 
     // Parse how many the user asked for (e.g. "suggest me 10 movie" → 10). Default 5, max 20.
     const countMatch = cleanQuery.match(/\b(\d+)\b/)
     const requestedCount = countMatch ? Math.min(parseInt(countMatch[1], 10), 20) : 5
 
-    const [movies, series] = await Promise.all([
-      fetchTrendingMovies().catch(() => []),
-      fetchTrendingSeries().catch(() => []),
+    // Fetch the right catalog: anime → Animation genre, movies → trending movies, general → both
+    const [movies, series, animeList] = await Promise.all([
+      (!wantAnime || wantMovie) ? fetchTrendingMovies().catch(() => []) : Promise.resolve([]),
+      (!wantAnime) ? fetchTrendingSeries().catch(() => []) : Promise.resolve([]),
+      wantAnime ? fetchByGenre('series', 'Animation').catch(() => []) : Promise.resolve([]),
     ])
 
-    let displayMovies = movies
-    let displaySeries = series
+    let displayMovies = wantMovie ? movies : []
+    let displaySeries = wantAnime ? animeList : series
     if (isFollowUpRec) {
-      displayMovies = [...movies].sort(() => 0.5 - Math.random())
-      displaySeries = [...series].sort(() => 0.5 - Math.random())
+      displayMovies = [...displayMovies].sort(() => 0.5 - Math.random())
+      displaySeries = [...displaySeries].sort(() => 0.5 - Math.random())
     }
 
     let response = isFollowUpRec
       ? `🍿 **Here are some fresh alternative recommendations for you:**\n\n`
       : `🎬 **Here are top recommendations on Qverse right now:**\n\n`
 
-    if (displayMovies.length > 0) {
-      const label = wantAnime ? "🎬 Anime Movies:" : "🎬 Recommended Movies:"
-      response += `${label}\n`
-      displayMovies.slice(0, wantMovie ? requestedCount : Math.ceil(requestedCount / 2)).forEach(m => {
-        response += `* [${m.name}](/watch/movie/${m.id}) — ⭐ ${m.imdbRating || "N/A"} (${m.releaseInfo || "N/A"})\n`
-      })
-      response += "\n"
-    }
-
-    if (!wantMovie && displaySeries.length > 0) {
-      response += `📺 TV Series & Anime:\n`
-      displaySeries.slice(0, wantAnime ? requestedCount : Math.floor(requestedCount / 2)).forEach(s => {
+    if (wantAnime) {
+      response += `📺 **Anime & Animation:**\n`
+      displaySeries.slice(0, requestedCount).forEach(s => {
         response += `* [${s.name}](/watch/series/${s.id}) — ⭐ ${s.imdbRating || "N/A"} (${s.releaseInfo || "N/A"})\n`
       })
       response += "\n"
+    } else {
+      if (displayMovies.length > 0) {
+        response += `🎬 Recommended Movies:\n`
+        displayMovies.slice(0, wantMovie ? requestedCount : Math.ceil(requestedCount / 2)).forEach(m => {
+          response += `* [${m.name}](/watch/movie/${m.id}) — ⭐ ${m.imdbRating || "N/A"} (${m.releaseInfo || "N/A"})\n`
+        })
+        response += "\n"
+      }
+      if (displaySeries.length > 0) {
+        response += `📺 TV Series & Anime:\n`
+        displaySeries.slice(0, Math.floor(requestedCount / 2)).forEach(s => {
+          response += `* [${s.name}](/watch/series/${s.id}) — ⭐ ${s.imdbRating || "N/A"} (${s.releaseInfo || "N/A"})\n`
+        })
+        response += "\n"
+      }
     }
 
     return response
@@ -485,15 +493,17 @@ If the user asks "what is this", "tell me about this show", "who plays in this",
       }
     }
 
-    // User context + trending
+    // User context + trending (+ anime-specific if requested)
+    const isAnimeQuery = /anime|animation/i.test(lastUserMessage)
     contextPromises.push((async () => {
       try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
 
-        const [movies, series, favorites, progress] = await Promise.all([
+        const [movies, series, animeResults, favorites, progress] = await Promise.all([
           fetchTrendingMovies().catch(() => []),
           fetchTrendingSeries().catch(() => []),
+          isAnimeQuery ? fetchByGenre('series', 'Animation').catch(() => []) : Promise.resolve([]),
           user ? getUserFavorites().catch(() => []) : Promise.resolve([]),
           user ? getUserProgressDB().catch(() => []) : Promise.resolve([]),
         ])
@@ -506,9 +516,12 @@ Watch Progress: ${progress.length > 0 ? progress.slice(0, 5).map(p => `"${p.titl
 
         const movieList = movies.slice(0, 6).map(m => `"${m.name}" (movie, id:${m.id}, rating:${m.imdbRating || "N/A"}, year:${m.releaseInfo || "N/A"}, genres:${m.genres?.slice(0, 3).join(",") || "N/A"})`).join("; ")
         const seriesList = series.slice(0, 6).map(s => `"${s.name}" (series, id:${s.id}, rating:${s.imdbRating || "N/A"}, year:${s.releaseInfo || "N/A"}, genres:${s.genres?.slice(0, 3).join(",") || "N/A"})`).join("; ")
+        const animeList = animeResults.slice(0, 12).map(s => `"${s.name}" (series/anime, id:${s.id}, rating:${s.imdbRating || "N/A"}, year:${s.releaseInfo || "N/A"})`).join("; ")
 
         trendingContext = `Trending Movies: ${movieList || "none"}
-Trending Series/Anime: ${seriesList || "none"}`
+Trending Series/Anime: ${seriesList || "none"}${
+  isAnimeQuery && animeList ? `\nAnime & Animation titles on Qverse (USE THESE for anime recommendations): ${animeList}` : ""
+}`
       } catch (e) {
         console.error("Context fetch error:", e)
       }
