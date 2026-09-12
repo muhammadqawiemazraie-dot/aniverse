@@ -4,6 +4,7 @@ import * as React from "react"
 import { Server, Monitor, Lightbulb, HelpCircle, SkipForward, X, Tv } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
+import { DownloadButton } from "@/components/download-button"
 
 interface VideoPlayerProps {
   imdbId: string
@@ -299,6 +300,15 @@ export function VideoPlayer({ imdbId, type, season, episode, title, absoluteEpis
               <Tv className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Cast to TV</span>
             </Button>
+
+            <DownloadButton
+              imdbId={imdbId}
+              type={type}
+              season={finalSeason}
+              episode={finalEpisode}
+              title={title}
+              className="h-8 text-xs rounded-md font-normal hover:bg-primary/20 hover:text-primary"
+            />
 
             {/* Keyboard shortcut help */}
             <div className="relative">

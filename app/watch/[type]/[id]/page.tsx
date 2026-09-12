@@ -18,6 +18,7 @@ import { EpisodesSidebar } from "@/components/episodes-sidebar"
 import { ReviewsSection } from "@/components/reviews-section"
 import { getAverageRating } from "@/app/actions/reviews"
 import { WatchPartyButton } from "@/components/watch-party-button"
+import { DownloadButton } from "@/components/download-button"
 
 interface WatchPageProps {
   params: Promise<{ type: string; id: string }>
@@ -247,6 +248,13 @@ export default async function WatchPage(props: WatchPageProps) {
                     mediaType={type}
                     season={season}
                     episode={episode}
+                  />
+                  <DownloadButton
+                    imdbId={data.id}
+                    type={type}
+                    season={season}
+                    episode={episode}
+                    title={data.name}
                   />
                   <ShareButton title={data.name} />
                 </div>
