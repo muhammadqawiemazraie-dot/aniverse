@@ -29,10 +29,9 @@ export function CommentsSection({ mediaId, mediaType, episodeId }: CommentsSecti
     setIsLoading(true)
     try {
       const data = await getComments(mediaId, mediaType, episodeId)
-      setComments(data)
+      setComments(data || [])
     } catch (e) {
-      console.error(e)
-      toast.error("Failed to load comments")
+      console.error("Comments load error:", e)
     } finally {
       setIsLoading(false)
     }
