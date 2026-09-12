@@ -307,7 +307,8 @@ export function VideoPlayer({ imdbId, type, season, episode, title, absoluteEpis
               season={finalSeason}
               episode={finalEpisode}
               title={title}
-              className="h-8 text-xs rounded-md font-normal hover:bg-primary/20 hover:text-primary"
+              variant="default"
+              className="h-8 text-xs rounded-md font-bold bg-primary text-primary-foreground hover:bg-primary/90 shadow transition-all"
             />
 
             {/* Keyboard shortcut help */}

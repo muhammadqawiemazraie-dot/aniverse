@@ -158,14 +158,35 @@ export default async function WatchPage(props: WatchPageProps) {
         </div>
       )}
 
-      <div className="container mx-auto px-4 py-6 flex flex-col gap-6">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
-          <ChevronRight className="w-3.5 h-3.5" />
-          <Link href={`/genres/${encodeURIComponent(firstGenre ?? "")}?type=${type}`} className="hover:text-foreground transition-colors capitalize">{firstGenre ?? type}</Link>
-          <ChevronRight className="w-3.5 h-3.5" />
-          <span className="text-foreground font-medium line-clamp-1">{data.name}</span>
+      <div className="container mx-auto px-4 py-3 flex flex-col gap-3.5">
+        {/* Top Header Bar with Breadcrumbs & Instant Quick Actions */}
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground min-w-0">
+            <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
+            <ChevronRight className="w-3.5 h-3.5 flex-shrink-0" />
+            <Link href={`/genres/${encodeURIComponent(firstGenre ?? "")}?type=${type}`} className="hover:text-foreground transition-colors capitalize truncate">{firstGenre ?? type}</Link>
+            <ChevronRight className="w-3.5 h-3.5 flex-shrink-0" />
+            <span className="text-foreground font-medium truncate">{data.name}</span>
+          </div>
+
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <DownloadButton
+              imdbId={data.id}
+              type={type}
+              season={season}
+              episode={episode}
+              title={data.name}
+              variant="default"
+              className="bg-primary text-primary-foreground font-bold shadow-lg hover:scale-105 transition-all"
+            />
+            <FavoriteButton 
+              mediaId={data.id} 
+              mediaType={type} 
+              title={data.name} 
+              imageUrl={data.poster} 
+            />
+            <ShareButton title={data.name} />
+          </div>
         </div>
 
         {/* ── Rearranged Grid for Theater Mode ── */}
