@@ -12,6 +12,7 @@ import { TopProgressBar } from "@/components/top-progress-bar";
 import { ParticleBackground } from "@/components/particle-background";
 import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
 import { ResumeBanner } from "@/components/resume-banner";
+import Script from "next/script";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -132,6 +133,28 @@ export default function RootLayout({
                   });
                 });
               }
+            `
+          }}
+        />
+        <Script
+          src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"
+          strategy="afterInteractive"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.__onGCastApiAvailable = function(isAvailable) {
+                if (isAvailable && window.cast && window.cast.framework && window.chrome && window.chrome.cast) {
+                  try {
+                    window.cast.framework.CastContext.getInstance().setOptions({
+                      receiverApplicationId: window.chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+                      autoJoinPolicy: window.chrome.cast.AutoJoinPolicy.ORIGIN_SCORED
+                    });
+                  } catch (e) {
+                    console.error('Google Cast init error:', e);
+                  }
+                }
+              };
             `
           }}
         />

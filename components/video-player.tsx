@@ -1,8 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { Server, Monitor, Lightbulb, HelpCircle, SkipForward, X } from "lucide-react"
+import { Server, Monitor, Lightbulb, HelpCircle, SkipForward, X, Tv } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
 
 interface VideoPlayerProps {
   imdbId: string
@@ -105,6 +106,42 @@ export function VideoPlayer({ imdbId, type, season, episode, title, absoluteEpis
   const [showHotkeys, setShowHotkeys] = React.useState(false)
   const [showSkipIntro, setShowSkipIntro] = React.useState(false)
   const [skipIntroDismissed, setSkipIntroDismissed] = React.useState(false)
+  const [showCastModal, setShowCastModal] = React.useState(false)
+
+  const handleCastToTV = () => {
+    // 1. Check Google Cast framework SDK
+    if (typeof window !== "undefined" && window.cast?.framework && window.chrome?.cast) {
+      try {
+        const castContext = window.cast.framework.CastContext.getInstance()
+        castContext.requestSession().then(
+          () => {
+            toast.success("Connecting to Chromecast / Smart TV...")
+          },
+          (err: unknown) => {
+            if (err !== "cancel") {
+              setShowCastModal(true)
+            }
+          }
+        )
+        return
+      } catch {
+        // Fallback if cast context fails
+      }
+    }
+
+    // 2. Check AirPlay target picker for Apple Safari devices
+    if (iframeRef.current && "webkitShowPlaybackTargetPicker" in iframeRef.current) {
+      try {
+        (iframeRef.current as unknown as { webkitShowPlaybackTargetPicker: () => void }).webkitShowPlaybackTargetPicker()
+        return
+      } catch {
+        // Fallback
+      }
+    }
+
+    // 3. Show Cast guidance modal
+    setShowCastModal(true)
+  }
 
   // Reset loading states when URL changes
   React.useEffect(() => {
@@ -252,6 +289,17 @@ export function VideoPlayer({ imdbId, type, season, episode, title, absoluteEpis
               <span className="hidden sm:inline">Theater Mode</span>
             </Button>
 
+            <Button
+              variant="secondary"
+              size="sm"
+              className="h-8 text-xs rounded-md flex items-center gap-1.5 hover:bg-primary/20 hover:text-primary transition-all"
+              onClick={handleCastToTV}
+              title="Cast to TV"
+            >
+              <Tv className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Cast to TV</span>
+            </Button>
+
             {/* Keyboard shortcut help */}
             <div className="relative">
               <Button
@@ -337,7 +385,7 @@ export function VideoPlayer({ imdbId, type, season, episode, title, absoluteEpis
           ref={iframeRef}
           src={selectedServer.url}
           title={`Watch ${title}`}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; presentation; display-capture; web-share"
           allowFullScreen
           className="absolute inset-0 w-full h-full border-0 bg-transparent"
           onLoad={() => setIsLoading(false)}
@@ -356,6 +404,56 @@ export function VideoPlayer({ imdbId, type, season, episode, title, absoluteEpis
           </div>
         )}
       </div>
+
+      {/* Cast to TV Helper Modal */}
+      {showCastModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-md bg-card border border-border rounded-2xl p-6 shadow-2xl space-y-4">
+            <button
+              onClick={() => setShowCastModal(false)}
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-primary/10 rounded-xl text-primary border border-primary/20">
+                <Tv className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg leading-tight text-foreground">Cast to TV</h3>
+                <p className="text-xs text-muted-foreground">Stream "{title}" to your TV or Chromecast</p>
+              </div>
+            </div>
+
+            <div className="space-y-3 text-sm text-muted-foreground pt-2">
+              <div className="p-3.5 bg-secondary/40 rounded-xl border border-border/60">
+                <p className="font-semibold text-foreground text-xs uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                  📺 Chrome & Edge (Chromecast / Smart TV)
+                </p>
+                <p className="text-xs leading-relaxed">
+                  Click your browser's <strong>3-dot menu</strong> (top right) &rarr; select <strong>Cast...</strong> &rarr; pick your TV device.
+                </p>
+              </div>
+
+              <div className="p-3.5 bg-secondary/40 rounded-xl border border-border/60">
+                <p className="font-semibold text-foreground text-xs uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                  🍎 AirPlay (iPhone, iPad & Mac)
+                </p>
+                <p className="text-xs leading-relaxed">
+                  Swipe open <strong>Control Center</strong> &rarr; tap <strong>Screen Mirroring</strong> &rarr; select your Apple TV or AirPlay TV.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-2 justify-end pt-2">
+              <Button size="sm" className="font-semibold px-5" onClick={() => setShowCastModal(false)}>
+                Got it
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
