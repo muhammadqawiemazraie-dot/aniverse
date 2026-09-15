@@ -19,7 +19,7 @@ export async function addFavorite(
   }
 
   const cookieStore = await cookies()
-  const profileId = cookieStore.get("aniverse_profile_id")?.value || "default"
+  const profileId = cookieStore.get("qverse_profile_id")?.value || cookieStore.get("aniverse_profile_id")?.value || "default"
   const scopedMediaId = `${profileId}::${mediaId}`
 
   // Workaround for missing UPDATE RLS policy on favorites table:
@@ -56,7 +56,7 @@ export async function removeFavorite(mediaId: string) {
   }
 
   const cookieStore = await cookies()
-  const profileId = cookieStore.get("aniverse_profile_id")?.value || "default"
+  const profileId = cookieStore.get("qverse_profile_id")?.value || cookieStore.get("aniverse_profile_id")?.value || "default"
   const scopedMediaId = `${profileId}::${mediaId}`
 
   const { error } = await supabase
@@ -86,7 +86,7 @@ export async function getUserFavorites() {
   if (!user) return []
 
   const cookieStore = await cookies()
-  const profileId = cookieStore.get("aniverse_profile_id")?.value || "default"
+  const profileId = cookieStore.get("qverse_profile_id")?.value || cookieStore.get("aniverse_profile_id")?.value || "default"
 
   const { data, error } = await supabase
     .from("favorites")
@@ -118,7 +118,7 @@ export async function isFavorite(mediaId: string) {
   if (!user) return false
 
   const cookieStore = await cookies()
-  const profileId = cookieStore.get("aniverse_profile_id")?.value || "default"
+  const profileId = cookieStore.get("qverse_profile_id")?.value || cookieStore.get("aniverse_profile_id")?.value || "default"
   const scopedMediaId = `${profileId}::${mediaId}`
 
   const { count } = await supabase
@@ -146,7 +146,7 @@ export async function getFavoriteStatus(mediaId: string) {
   if (!user) return null
 
   const cookieStore = await cookies()
-  const profileId = cookieStore.get("aniverse_profile_id")?.value || "default"
+  const profileId = cookieStore.get("qverse_profile_id")?.value || cookieStore.get("aniverse_profile_id")?.value || "default"
   const scopedMediaId = `${profileId}::${mediaId}`
 
   const { data, error } = await supabase

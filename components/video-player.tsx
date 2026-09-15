@@ -87,7 +87,7 @@ export function VideoPlayer({ imdbId, type, season, episode, title, absoluteEpis
   // Initialize server from localStorage if present during render-initialization phase (avoids useEffect setState error)
   const [selectedServerId, setSelectedServerId] = React.useState(() => {
     if (typeof window !== "undefined") {
-      const savedServerId = localStorage.getItem("aniverse-preferred-server")
+      const savedServerId = localStorage.getItem("qverse-preferred-server") || localStorage.getItem("aniverse-preferred-server")
       if (savedServerId) {
         return savedServerId
       }
@@ -212,7 +212,7 @@ export function VideoPlayer({ imdbId, type, season, episode, title, absoluteEpis
   const handleServerChange = (server: typeof SERVERS[0]) => {
     setIsLoading(true)
     setSelectedServerId(server.id)
-    localStorage.setItem("aniverse-preferred-server", server.id)
+    localStorage.setItem("qverse-preferred-server", server.id)
   }
 
   const toggleTheater = () => {

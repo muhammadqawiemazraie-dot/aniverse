@@ -41,7 +41,7 @@ export async function saveProgressDB(params: {
   }
 
   const cookieStore = await cookies()
-  const profileId = cookieStore.get("aniverse_profile_id")?.value || "default"
+  const profileId = cookieStore.get("qverse_profile_id")?.value || cookieStore.get("aniverse_profile_id")?.value || "default"
   const scopedMediaId = `${profileId}::${params.mediaId}`
 
   const { error } = await supabase
@@ -78,7 +78,7 @@ export async function getUserProgressDB(): Promise<WatchProgress[]> {
   if (!user) return []
 
   const cookieStore = await cookies()
-  const profileId = cookieStore.get("aniverse_profile_id")?.value || "default"
+  const profileId = cookieStore.get("qverse_profile_id")?.value || cookieStore.get("aniverse_profile_id")?.value || "default"
 
   const { data, error } = await supabase
     .from("watch_progress")
@@ -109,7 +109,7 @@ export async function getSingleProgressDB(mediaId: string): Promise<WatchProgres
   if (!user) return null
 
   const cookieStore = await cookies()
-  const profileId = cookieStore.get("aniverse_profile_id")?.value || "default"
+  const profileId = cookieStore.get("qverse_profile_id")?.value || cookieStore.get("aniverse_profile_id")?.value || "default"
   const scopedMediaId = `${profileId}::${mediaId}`
 
   const { data, error } = await supabase
@@ -153,7 +153,7 @@ export async function deleteProgressDB(mediaId: string) {
   }
 
   const cookieStore = await cookies()
-  const profileId = cookieStore.get("aniverse_profile_id")?.value || "default"
+  const profileId = cookieStore.get("qverse_profile_id")?.value || cookieStore.get("aniverse_profile_id")?.value || "default"
   const scopedMediaId = `${profileId}::${mediaId}`
 
   const { error } = await supabase
@@ -184,7 +184,7 @@ export async function clearAllProgressDB() {
   }
 
   const cookieStore = await cookies()
-  const profileId = cookieStore.get("aniverse_profile_id")?.value || "default"
+  const profileId = cookieStore.get("qverse_profile_id")?.value || cookieStore.get("aniverse_profile_id")?.value || "default"
   const prefix = `${profileId}::`
 
   const { data, error: fetchError } = await supabase

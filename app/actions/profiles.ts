@@ -84,7 +84,7 @@ export async function updateProfile(id: string, name: string, avatarUrl: string,
 
   // Determine if this is the active profile
   const cookieStore = await cookies()
-  const activeId = cookieStore.get("aniverse_profile_id")?.value || "default"
+  const activeId = cookieStore.get("qverse_profile_id")?.value || cookieStore.get("aniverse_profile_id")?.value || "default"
 
   const updateData: any = {
     ...user.user_metadata,
@@ -168,9 +168,9 @@ export async function deleteProfile(id: string) {
 
   // If the deleted profile was the active one, switch to default
   const cookieStore = await cookies()
-  const activeId = cookieStore.get("aniverse_profile_id")?.value
+  const activeId = cookieStore.get("qverse_profile_id")?.value || cookieStore.get("aniverse_profile_id")?.value
   if (activeId === id) {
-    cookieStore.set("aniverse_profile_id", "default", { maxAge: 60 * 60 * 24 * 365 })
+    cookieStore.set("qverse_profile_id", "default", { maxAge: 60 * 60 * 24 * 365 })
   }
 
   revalidatePath("/", "layout")
@@ -183,7 +183,7 @@ export async function getActiveProfile(): Promise<Profile | null> {
   if (!user) return null
 
   const cookieStore = await cookies()
-  const activeId = cookieStore.get("aniverse_profile_id")?.value || "default"
+  const activeId = cookieStore.get("qverse_profile_id")?.value || cookieStore.get("aniverse_profile_id")?.value || "default"
   
   const profiles = await getProfiles()
   const activeProfile = profiles.find(p => p.id === activeId)
@@ -192,7 +192,7 @@ export async function getActiveProfile(): Promise<Profile | null> {
 
 export async function setActiveProfile(id: string) {
   const cookieStore = await cookies()
-  cookieStore.set("aniverse_profile_id", id, { maxAge: 60 * 60 * 24 * 365 })
+  cookieStore.set("qverse_profile_id", id, { maxAge: 60 * 60 * 24 * 365 })
   
   // Update main user metadata avatar_url to match active profile
   const supabase = await createClient()

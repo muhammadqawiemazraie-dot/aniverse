@@ -12,7 +12,7 @@ export function AuthAvatar() {
     getActiveProfile().then(profile => {
       if (profile) {
         if (profile.avatar_url === "local_file") {
-          const localAvatar = localStorage.getItem(`aniverse_avatar_${profile.id}`)
+          const localAvatar = localStorage.getItem(`qverse_avatar_${profile.id}`) || localStorage.getItem(`aniverse_avatar_${profile.id}`)
           if (localAvatar) {
             setAvatarUrl(localAvatar)
             return

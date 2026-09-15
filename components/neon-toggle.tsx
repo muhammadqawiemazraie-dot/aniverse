@@ -7,7 +7,7 @@ export function NeonToggle() {
   const [neon, setNeon] = React.useState(false)
 
   React.useEffect(() => {
-    const saved = localStorage.getItem("aniverse_neon") === "true"
+    const saved = (localStorage.getItem("qverse_neon") || localStorage.getItem("aniverse_neon")) === "true"
     setTimeout(() => setNeon(saved), 0)
     if (saved) document.documentElement.classList.add("neon")
   }, [])
@@ -20,7 +20,7 @@ export function NeonToggle() {
     } else {
       document.documentElement.classList.remove("neon")
     }
-    localStorage.setItem("aniverse_neon", String(next))
+    localStorage.setItem("qverse_neon", String(next))
   }
 
   return (

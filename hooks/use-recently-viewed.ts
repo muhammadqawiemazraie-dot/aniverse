@@ -12,7 +12,8 @@ export interface RecentItem {
   viewedAt: number
 }
 
-const STORAGE_KEY = "aniverse_recently_viewed"
+const STORAGE_KEY = "qverse_recently_viewed"
+const LEGACY_STORAGE_KEY = "aniverse_recently_viewed"
 const MAX_ITEMS = 20
 
 export function useRecentlyViewed() {
@@ -20,7 +21,7 @@ export function useRecentlyViewed() {
 
   React.useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY)
+      const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY)
       if (raw) {
         setTimeout(() => setItems(JSON.parse(raw)), 0)
       }

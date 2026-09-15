@@ -326,6 +326,8 @@ export function ProfileSwitcher({ initialProfiles, activeProfile }: ProfileSwitc
     } else {
       toast.success("Profile deleted.")
       // Clean up localStorage
+      localStorage.removeItem(`qverse_avatar_${profileId}`)
+      localStorage.removeItem(`qverse_banner_${profileId}`)
       localStorage.removeItem(`aniverse_avatar_${profileId}`)
       localStorage.removeItem(`aniverse_banner_${profileId}`)
 
@@ -355,7 +357,7 @@ export function ProfileSwitcher({ initialProfiles, activeProfile }: ProfileSwitc
     
     if (p.avatar_url === "local_file") {
       setAvatarMode('custom')
-      const local = localStorage.getItem(`aniverse_avatar_${p.id}`)
+      const local = localStorage.getItem(`qverse_avatar_${p.id}`) || localStorage.getItem(`aniverse_avatar_${p.id}`)
       setCustomAvatarUrl(local || "")
     } else {
       const isCustomAvatar = !AVATARS.includes(p.avatar_url)
@@ -368,7 +370,7 @@ export function ProfileSwitcher({ initialProfiles, activeProfile }: ProfileSwitc
     
     if (banner === "local_file") {
       setBannerMode('custom')
-      const local = localStorage.getItem(`aniverse_banner_${p.id}`)
+      const local = localStorage.getItem(`qverse_banner_${p.id}`) || localStorage.getItem(`aniverse_banner_${p.id}`)
       setCustomBannerUrl(local || "")
     } else {
       const isCustomBanner = !BANNER_PRESETS.includes(banner)

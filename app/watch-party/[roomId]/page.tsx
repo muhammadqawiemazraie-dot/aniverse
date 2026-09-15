@@ -47,7 +47,7 @@ export default function WatchPartyRoom() {
   // Room states
   const [username, setUsername] = React.useState(() => {
     if (typeof window === "undefined") return `User_${Math.floor(1000 + Math.random() * 9000)}`
-    return localStorage.getItem("aniverse-active-profile-name") || `User_${Math.floor(1000 + Math.random() * 9000)}`
+    return localStorage.getItem("qverse-active-profile-name") || localStorage.getItem("aniverse-active-profile-name") || `User_${Math.floor(1000 + Math.random() * 9000)}`
   })
   const [joined, setJoined] = React.useState(false)
   const [isHost] = React.useState(isUrlHost)

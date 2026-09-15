@@ -83,9 +83,9 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  var preset = localStorage.getItem('aniverse_theme_preset') || 'sakura';
-                  var color = localStorage.getItem('aniverse_primary_color');
-                  var fg = localStorage.getItem('aniverse_primary_fg_color');
+                  var preset = localStorage.getItem('qverse_theme_preset') || localStorage.getItem('aniverse_theme_preset') || 'sakura';
+                  var color = localStorage.getItem('qverse_primary_color') || localStorage.getItem('aniverse_primary_color');
+                  var fg = localStorage.getItem('qverse_primary_fg_color') || localStorage.getItem('aniverse_primary_fg_color');
                   
                   if (preset === 'custom' && color) {
                     document.documentElement.style.setProperty('--primary', color);

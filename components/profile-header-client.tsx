@@ -31,7 +31,7 @@ export function ProfileHeaderClient({
   React.useEffect(() => {
     // If avatar is stored locally, retrieve it
     if (activeAvatar === "local_file") {
-      const localAvatar = localStorage.getItem(`aniverse_avatar_${activeProfileId}`)
+      const localAvatar = localStorage.getItem(`qverse_avatar_${activeProfileId}`) || localStorage.getItem(`aniverse_avatar_${activeProfileId}`)
       setAvatar(localAvatar || "/avatars/1.jpg")
     } else {
       setAvatar(activeAvatar)
@@ -39,7 +39,7 @@ export function ProfileHeaderClient({
 
     // If banner is stored locally, retrieve it
     if (activeBanner === "local_file") {
-      const localBanner = localStorage.getItem(`aniverse_banner_${activeProfileId}`)
+      const localBanner = localStorage.getItem(`qverse_banner_${activeProfileId}`) || localStorage.getItem(`aniverse_banner_${activeProfileId}`)
       setBanner(localBanner || "https://cdn.myanimelist.net/images/anime/1015/138006l.jpg")
     } else {
       setBanner(activeBanner)

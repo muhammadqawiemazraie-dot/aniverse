@@ -44,7 +44,7 @@ export function ScheduleTabs({ initialGrouped }: ScheduleTabsProps) {
 
   React.useEffect(() => {
     try {
-      const saved = localStorage.getItem("aniverse-schedule-reminders")
+      const saved = localStorage.getItem("qverse-schedule-reminders") || localStorage.getItem("aniverse-schedule-reminders")
       if (saved) {
         setTimeout(() => setReminders(JSON.parse(saved)), 0)
       }
@@ -111,7 +111,7 @@ export function ScheduleTabs({ initialGrouped }: ScheduleTabsProps) {
         toast.success(`Reminder enabled for ${title}! We will alert you when it airs.`)
       }
       try {
-        localStorage.setItem("aniverse-schedule-reminders", JSON.stringify(next))
+        localStorage.setItem("qverse-schedule-reminders", JSON.stringify(next))
       } catch {}
       return next
     })

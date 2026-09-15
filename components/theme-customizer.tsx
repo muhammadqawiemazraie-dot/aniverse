@@ -14,8 +14,8 @@ export function ThemeCustomizer() {
 
   // Prevent hydration mismatch
   React.useEffect(() => {
-    const preset = localStorage.getItem("aniverse_theme_preset") || "sakura"
-    const color = localStorage.getItem("aniverse_primary_color") || "#ec4899"
+    const preset = localStorage.getItem("qverse_theme_preset") || localStorage.getItem("aniverse_theme_preset") || "sakura"
+    const color = localStorage.getItem("qverse_primary_color") || localStorage.getItem("aniverse_primary_color") || "#ec4899"
     
     setTimeout(() => {
       setMounted(true)
@@ -28,13 +28,15 @@ export function ThemeCustomizer() {
 
   const applyPreset = (presetId: string) => {
     setActivePreset(presetId)
-    localStorage.setItem("aniverse_theme_preset", presetId)
+    localStorage.setItem("qverse_theme_preset", presetId)
     
     if (presetId === "custom") {
       applyColor(customColor)
       return
     }
 
+    localStorage.removeItem("qverse_primary_color")
+    localStorage.removeItem("qverse_primary_fg_color")
     localStorage.removeItem("aniverse_primary_color")
     localStorage.removeItem("aniverse_primary_fg_color")
 
@@ -64,9 +66,9 @@ export function ThemeCustomizer() {
     // If it's a very light color, use dark foreground, else white/light foreground
     const fg = yiq >= 150 ? "oklch(0.15 0.05 270)" : "oklch(0.98 0 0)"
 
-    localStorage.setItem("aniverse_theme_preset", "custom")
-    localStorage.setItem("aniverse_primary_color", hexColor)
-    localStorage.setItem("aniverse_primary_fg_color", fg)
+    localStorage.setItem("qverse_theme_preset", "custom")
+    localStorage.setItem("qverse_primary_color", hexColor)
+    localStorage.setItem("qverse_primary_fg_color", fg)
 
     document.documentElement.style.setProperty("--primary", hexColor)
     document.documentElement.style.setProperty("--ring", hexColor)

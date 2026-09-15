@@ -29,7 +29,7 @@ export function ProfileDiagnostics({
     try {
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i)
-        if (key && (key.startsWith("aniverse_avatar") || key.startsWith("aniverse_banner"))) {
+        if (key && (key.startsWith("qverse_avatar") || key.startsWith("qverse_banner") || key.startsWith("aniverse_avatar") || key.startsWith("aniverse_banner"))) {
           const val = localStorage.getItem(key) || ""
           keys.push({
             key,
@@ -45,14 +45,14 @@ export function ProfileDiagnostics({
 
     // Resolve active avatar/banner
     if (activeAvatar === "local_file") {
-      const local = localStorage.getItem(`aniverse_avatar_${activeProfileId}`)
+      const local = localStorage.getItem(`qverse_avatar_${activeProfileId}`) || localStorage.getItem(`aniverse_avatar_${activeProfileId}`)
       setResolvedAvatar(local ? `Local storage (${local.length} chars)` : "Not found in local storage!")
     } else {
       setResolvedAvatar(`Server: ${activeAvatar}`)
     }
 
     if (activeBanner === "local_file") {
-      const local = localStorage.getItem(`aniverse_banner_${activeProfileId}`)
+      const local = localStorage.getItem(`qverse_banner_${activeProfileId}`) || localStorage.getItem(`aniverse_banner_${activeProfileId}`)
       setResolvedBanner(local ? `Local storage (${local.length} chars)` : "Not found in local storage!")
     } else {
       setResolvedBanner(`Server: ${activeBanner}`)

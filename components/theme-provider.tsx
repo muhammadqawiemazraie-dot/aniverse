@@ -64,9 +64,9 @@ function AccentSync() {
   const { resolvedTheme } = useTheme()
 
   React.useEffect(() => {
-    const presetId = localStorage.getItem("aniverse_theme_preset") || "sakura"
-    const customColor = localStorage.getItem("aniverse_primary_color")
-    const customFg = localStorage.getItem("aniverse_primary_fg_color")
+    const presetId = localStorage.getItem("qverse_theme_preset") || localStorage.getItem("aniverse_theme_preset") || "sakura"
+    const customColor = localStorage.getItem("qverse_primary_color") || localStorage.getItem("aniverse_primary_color")
+    const customFg = localStorage.getItem("qverse_primary_fg_color") || localStorage.getItem("aniverse_primary_fg_color")
 
     if (presetId === "custom" && customColor) {
       document.documentElement.style.setProperty("--primary", customColor)

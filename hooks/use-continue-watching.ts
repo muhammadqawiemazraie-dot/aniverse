@@ -13,7 +13,8 @@ export interface WatchedItem {
   watchedAt: number
 }
 
-const STORAGE_KEY = "aniverse_continue_watching"
+const STORAGE_KEY = "qverse_continue_watching"
+const LEGACY_STORAGE_KEY = "aniverse_continue_watching"
 const MAX_ITEMS = 12
 
 export function useContinueWatching() {
@@ -22,7 +23,7 @@ export function useContinueWatching() {
   React.useEffect(() => {
     // Load local storage first
     try {
-      const raw = localStorage.getItem(STORAGE_KEY)
+      const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY)
       if (raw) {
         setTimeout(() => setItems(JSON.parse(raw)), 0)
       }

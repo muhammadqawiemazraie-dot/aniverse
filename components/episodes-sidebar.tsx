@@ -37,8 +37,9 @@ export function EpisodesSidebar({ videos, season, episode, type, id, fallbackPos
   // Load and update watched episodes history for this show
   React.useEffect(() => {
     try {
-      const storageKey = `aniverse_episodes_${id}`
-      const raw = localStorage.getItem(storageKey)
+      const storageKey = `qverse_episodes_${id}`
+      const legacyKey = `aniverse_episodes_${id}`
+      const raw = localStorage.getItem(storageKey) || localStorage.getItem(legacyKey)
       const currentKey = `${season}-${episode}`
       let set = new Set<string>()
       if (raw) {
