@@ -30,7 +30,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://qverse-stream.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://qversewim.netlify.app"),
   title: {
     default: "Qverse - Stream Movies, Series & Anime",
     template: "%s — Qverse",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Qverse - Stream Movies, Series & Anime",
     description: "Discover, track, and stream the latest Movies, TV Series, and Anime — all in one place.",
-    url: "https://qverse-stream.vercel.app",
+    url: "https://qversewim.netlify.app",
     siteName: "Qverse",
     locale: "en_US",
     type: "website",

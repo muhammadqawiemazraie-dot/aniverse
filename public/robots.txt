@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://qverse-stream.vercel.app/sitemap.xml
+Sitemap: https://qversewim.netlify.app/sitemap.xml
