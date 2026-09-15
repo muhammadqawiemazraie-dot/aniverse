@@ -10,6 +10,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ModeToggle } from "@/components/mode-toggle"
 import { AuthAvatar } from "@/components/auth-avatar"
 import { NotificationBell } from "@/components/notification-bell"
+import { SearchSpotlight } from "@/components/search-spotlight"
 import type { SuggestionItem } from "@/app/api/search/suggestions/route"
 
 export function Navbar() {
@@ -200,6 +201,8 @@ export function Navbar() {
     }
   }
 
+  const [spotlightOpen, setSpotlightOpen] = React.useState(false)
+
   return (
     <header
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
@@ -208,6 +211,7 @@ export function Navbar() {
           : "bg-transparent"
       }`}
     >
+      <SearchSpotlight open={spotlightOpen} onOpenChange={setSpotlightOpen} />
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Sheet>
@@ -282,6 +286,16 @@ export function Navbar() {
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
             />
+            <button
+              type="button"
+              onClick={() => setSpotlightOpen(true)}
+              className="absolute right-9 top-1/2 -translate-y-1/2 hidden lg:inline-flex items-center gap-0.5 text-[10px] font-bold font-mono px-1.5 py-0.5 bg-background/60 text-muted-foreground rounded border border-border/80 hover:text-foreground hover:border-primary transition-all"
+              title="Quick Search Spotlight (Ctrl + S)"
+            >
+              <span>Ctrl</span>
+              <span>+</span>
+              <span>S</span>
+            </button>
             <button
               type="button"
               onClick={handleVoiceSearch}

@@ -8,6 +8,7 @@ export interface SuggestionItem {
   poster: string | null
   type: "movie" | "series"
   releaseInfo: string | null
+  imdbRating?: string | null
 }
 
 export async function GET(request: Request) {
@@ -31,6 +32,7 @@ export async function GET(request: Request) {
         poster: m.poster || null,
         type: "movie" as const,
         releaseInfo: m.releaseInfo || null,
+        imdbRating: m.imdbRating || null,
       })),
       ...series.slice(0, 3).map((s) => ({
         id: s.id,
@@ -38,12 +40,20 @@ export async function GET(request: Request) {
         poster: s.poster || null,
         type: "series" as const,
         releaseInfo: s.releaseInfo || null,
+        imdbRating: s.imdbRating || null,
       })),
     ]
 
-    return NextResponse.json({ results })
+    return NextResponse.json(
+      { results, suggestions: results },
+      {
+        headers: {
+          "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
+        },
+      }
+    )
   } catch (error) {
     console.error("Suggestions error:", error)
-    return NextResponse.json({ results: [] })
+    return NextResponse.json({ results: [], suggestions: [] })
   }
 }

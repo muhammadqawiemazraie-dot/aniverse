@@ -15,6 +15,7 @@ interface MediaCardProps {
   imdbRating?: string | null
   rank?: number
   showType?: boolean
+  progress?: number
   className?: string
 }
 
@@ -27,7 +28,7 @@ function getRatingColor(rating?: string | null, type?: string) {
 }
 
 export function MediaCard({
-  id, type, name, poster, releaseInfo, imdbRating, rank, showType = false, className = ""
+  id, type, name, poster, releaseInfo, imdbRating, rank, showType = false, progress, className = ""
 }: MediaCardProps) {
   const ratingBorder = getRatingColor(imdbRating, type)
 
@@ -44,6 +45,16 @@ export function MediaCard({
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 17vw"
             className="object-cover transition-transform duration-500 group-hover:scale-110"
           />
+
+          {/* Watch Progress Bar */}
+          {progress !== undefined && progress > 0 && (
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/60 z-10">
+              <div
+                className="h-full bg-gradient-to-r from-primary to-cyan-400 rounded-r-full shadow-[0_0_8px_rgba(0,255,255,0.8)]"
+                style={{ width: `${Math.min(100, Math.max(5, progress))}%` }}
+              />
+            </div>
+          )}
 
           {/* Hover overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-start justify-end p-3 gap-1">

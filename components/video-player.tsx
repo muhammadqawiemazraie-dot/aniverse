@@ -162,11 +162,14 @@ export function VideoPlayer({ imdbId, type, season, episode, title, absoluteEpis
       } else if (e.key.toLowerCase() === "l") {
         e.preventDefault()
         setIsLightsDimmed(prev => !prev)
-      } else if (e.key.toLowerCase() === "s") {
+      } else if (e.key.toLowerCase() === "s" && !e.ctrlKey && !e.metaKey) {
         e.preventDefault()
         const currentIndex = SERVERS.findIndex(s => s.id === selectedServerId)
         const nextIndex = (currentIndex + 1) % SERVERS.length
         handleServerChange(SERVERS[nextIndex])
+      } else if (e.key.toLowerCase() === "i") {
+        e.preventDefault()
+        handleSkipIntro()
       }
     }
 
@@ -333,9 +336,11 @@ export function VideoPlayer({ imdbId, type, season, episode, title, absoluteEpis
                   </div>
                   <ul className="space-y-1.5">
                     {[
-                      { key: "F", desc: "Toggle Theater Mode" },
+                      { key: "Ctrl + S", desc: "Search Spotlight" },
+                      { key: "F", desc: "Toggle Theater" },
                       { key: "L", desc: "Lights Out" },
-                      { key: "S", desc: "Next Server" },
+                      { key: "I", desc: "Skip Intro (+85s)" },
+                      { key: "S", desc: "Switch Server" },
                     ].map(({ key, desc }) => (
                       <li key={key} className="flex items-center justify-between gap-2">
                         <span className="text-[11px] text-muted-foreground">{desc}</span>
