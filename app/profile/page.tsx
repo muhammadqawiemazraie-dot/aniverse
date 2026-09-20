@@ -286,14 +286,14 @@ export default async function ProfilePage() {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-black flex items-center gap-2 tracking-tight">
                 <Play className="w-6 h-6 text-primary" />
-                Continue Watching &amp; Reading
+                Continue Watching
               </h2>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {progress.length === 0 ? (
                 <div className="col-span-2 text-center p-12 bg-secondary/10 rounded-2xl border border-white/5">
-                  <p className="text-muted-foreground">No active progress. Watch a movie or read a chapter to resume here!</p>
+                  <p className="text-muted-foreground">No active progress. Watch a movie or show to resume here!</p>
                 </div>
               ) : (
                 progress.slice(0, 4).map((item) => {
