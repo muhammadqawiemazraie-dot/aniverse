@@ -281,7 +281,7 @@ export function Navbar() {
             <Input
               type="search"
               placeholder="Search movies, series..."
-              className="w-full pl-9 pr-9 bg-secondary/50 border-none rounded-full focus-visible:ring-primary focus-visible:bg-secondary transition-all"
+              className="w-full pl-9 pr-10 lg:pr-24 bg-secondary/50 border-none rounded-full focus-visible:ring-primary focus-visible:bg-secondary transition-all text-ellipsis"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}

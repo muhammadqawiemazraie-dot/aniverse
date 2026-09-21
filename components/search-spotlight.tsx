@@ -125,7 +125,7 @@ export function SearchSpotlight({ open: externalOpen, onOpenChange }: SearchSpot
             value={query}
             onChange={e => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Search Movies, Series, Anime... (Ctrl + S)"
+            placeholder="Search Movies, Series, Anime..."
             className="w-full h-14 bg-transparent text-base placeholder:text-muted-foreground outline-none text-foreground font-medium"
           />
           {query && (
