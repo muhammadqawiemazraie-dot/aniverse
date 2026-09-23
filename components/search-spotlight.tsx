@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import { Search, Film, Tv, Sparkles, X, ArrowRight, Star } from "lucide-react"
+import { Search, Film, Tv, Sparkles, X, ArrowRight, Star, Loader2 } from "lucide-react"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { SmartImage } from "@/components/smart-image"
 import { Badge } from "@/components/ui/badge"
@@ -68,8 +68,9 @@ export function SearchSpotlight({ open: externalOpen, onOpenChange }: SearchSpot
       return
     }
 
+    setIsLoading(true)
+
     const timer = setTimeout(async () => {
-      setIsLoading(true)
       try {
         const res = await fetch(`/api/search/suggestions?q=${encodeURIComponent(query)}`)
         if (res.ok) {
@@ -118,7 +119,11 @@ export function SearchSpotlight({ open: externalOpen, onOpenChange }: SearchSpot
       <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden bg-card/95 backdrop-blur-2xl border-white/10 shadow-2xl rounded-2xl">
         {/* Search Header */}
         <div className="flex items-center px-4 border-b border-border/50 bg-secondary/20">
-          <Search className="w-5 h-5 text-primary shrink-0 mr-3" />
+          {isLoading ? (
+            <Loader2 className="w-5 h-5 text-primary shrink-0 mr-3 animate-spin" />
+          ) : (
+            <Search className="w-5 h-5 text-primary shrink-0 mr-3" />
+          )}
           <input
             ref={inputRef}
             type="text"
@@ -174,8 +179,23 @@ export function SearchSpotlight({ open: externalOpen, onOpenChange }: SearchSpot
         {/* Results List */}
         <div className="max-h-[380px] overflow-y-auto p-2 space-y-1">
           {isLoading && (
-            <div className="py-8 text-center text-sm text-muted-foreground animate-pulse">
-              Searching Qverse database...
+            <div className="p-3 space-y-2">
+              <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground px-1 pb-1 animate-pulse">
+                <Loader2 className="h-3.5 w-3.5 text-primary animate-spin" />
+                <span>Searching Qverse database for &quot;{query}&quot;...</span>
+              </div>
+              {[1, 2, 3, 4].map(n => (
+                <div key={n} className="flex items-center justify-between p-2.5 rounded-xl bg-secondary/20 border border-white/5 animate-pulse gap-3">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="w-10 h-14 rounded-md bg-secondary/60 shrink-0" />
+                    <div className="space-y-2 flex-1 min-w-0">
+                      <div className="h-3.5 bg-secondary/70 rounded w-3/4" />
+                      <div className="h-2.5 bg-secondary/50 rounded w-1/2" />
+                    </div>
+                  </div>
+                  <div className="h-5 w-14 bg-secondary/60 rounded-full shrink-0" />
+                </div>
+              ))}
             </div>
           )}
 

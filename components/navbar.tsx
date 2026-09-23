@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { Search, Menu, Tv, X, Mic } from "lucide-react"
+import { Search, Menu, Tv, X, Mic, Loader2 } from "lucide-react"
 import { useRouter, usePathname } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
@@ -72,18 +72,20 @@ export function Navbar() {
       setTimeout(() => {
         setSuggestions([])
         setShowSuggestions(false)
+        setIsSearchingSuggestions(false)
       }, 0)
       return
     }
 
+    setIsSearchingSuggestions(true)
+    setShowSuggestions(true)
+
     const delayDebounce = setTimeout(async () => {
-      setIsSearchingSuggestions(true)
       try {
         const response = await fetch(`/api/search/suggestions?q=${encodeURIComponent(searchQuery)}`)
         if (response.ok) {
           const data = await response.json()
           setSuggestions(data.results || [])
-          setShowSuggestions(true)
         }
       } catch (e) {
         console.error("Error fetching suggestions:", e)
@@ -116,18 +118,35 @@ export function Navbar() {
         className="absolute top-full mt-2 w-[300px] sm:w-[360px] right-0 bg-card border border-white/10 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden z-[100] animate-in fade-in duration-200"
       >
         {isSearchingSuggestions && suggestions.length === 0 ? (
-          <div className="flex items-center justify-center p-6 text-muted-foreground text-xs gap-2">
-            <span className="animate-spin h-3.5 w-3.5 border-2 border-primary border-t-transparent rounded-full" />
-            Searching suggestions...
+          <div className="p-3 space-y-2">
+            <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground px-1 pb-1 animate-pulse">
+              <Loader2 className="h-3.5 w-3.5 text-primary animate-spin" />
+              <span>Searching Qverse database...</span>
+            </div>
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="flex items-center gap-3 p-2 rounded-xl bg-secondary/20 animate-pulse">
+                <div className="w-9 h-12 bg-secondary/60 rounded flex-shrink-0" />
+                <div className="flex-1 space-y-1.5">
+                  <div className="h-3 bg-secondary/70 rounded w-3/4" />
+                  <div className="h-2 bg-secondary/50 rounded w-1/3" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : suggestions.length === 0 ? (
           <div className="p-4 text-center text-muted-foreground text-xs">
             No matches found for &quot;{searchQuery}&quot;
           </div>
         ) : (
-          <div className="flex flex-col max-h-[320px] overflow-y-auto divide-y divide-white/5 scrollbar-thin">
-            <div className="p-2.5 text-[10px] text-muted-foreground uppercase font-bold tracking-wider bg-secondary/20">
-              Suggestions
+          <div className="flex flex-col max-h-[320px] overflow-y-auto divide-y divide-white/5 scrollbar-thin relative">
+            {isSearchingSuggestions && (
+              <div className="h-0.5 w-full bg-primary/20 overflow-hidden">
+                <div className="h-full bg-primary w-1/2 animate-[shimmer_1.2s_infinite] rounded-full" />
+              </div>
+            )}
+            <div className="p-2.5 text-[10px] text-muted-foreground uppercase font-bold tracking-wider bg-secondary/20 flex items-center justify-between">
+              <span>Suggestions</span>
+              {isSearchingSuggestions && <span className="text-primary text-[9px] font-normal animate-pulse">Updating...</span>}
             </div>
             {suggestions.map((item) => {
               const href = `/watch/${item.type}/${item.id}`
@@ -277,7 +296,11 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           {/* Desktop Search */}
           <form ref={dropdownRef} onSubmit={handleSearch} className="hidden sm:flex relative max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            {isSearchingSuggestions ? (
+              <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary animate-spin" />
+            ) : (
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            )}
             <Input
               type="search"
               placeholder="Search movies, series..."
@@ -314,7 +337,11 @@ export function Navbar() {
           {mobileSearchOpen ? (
             <form ref={mobileDropdownRef} onSubmit={handleSearch} className="sm:hidden flex items-center gap-2 relative animate-in slide-in-from-right-4 duration-200">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                {isSearchingSuggestions ? (
+                  <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary animate-spin" />
+                ) : (
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                )}
                 <Input
                   ref={mobileInputRef}
                   type="search"
