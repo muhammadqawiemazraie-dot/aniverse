@@ -211,14 +211,23 @@ export function Navbar() {
     }
   }, [mobileSearchOpen])
 
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
+      setIsSubmitting(true)
+      setShowSuggestions(false)
       router.push(`/browse?q=${encodeURIComponent(searchQuery)}`)
       setMobileSearchOpen(false)
-      setSearchQuery("")
+      setTimeout(() => {
+        setIsSubmitting(false)
+        setSearchQuery("")
+      }, 800)
     }
   }
+
+  const isSpinnerActive = isSearchingSuggestions || isSubmitting
 
   const [spotlightOpen, setSpotlightOpen] = React.useState(false)
 
@@ -296,10 +305,17 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           {/* Desktop Search */}
           <form ref={dropdownRef} onSubmit={handleSearch} className="hidden sm:flex relative max-w-sm">
-            {isSearchingSuggestions ? (
-              <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary animate-spin" />
+            {isSpinnerActive ? (
+              <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary animate-spin pointer-events-none" />
             ) : (
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <button
+                type="submit"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                title="Search"
+                aria-label="Search"
+              >
+                <Search className="h-4 w-4" />
+              </button>
             )}
             <Input
               type="search"
@@ -337,10 +353,17 @@ export function Navbar() {
           {mobileSearchOpen ? (
             <form ref={mobileDropdownRef} onSubmit={handleSearch} className="sm:hidden flex items-center gap-2 relative animate-in slide-in-from-right-4 duration-200">
               <div className="relative">
-                {isSearchingSuggestions ? (
-                  <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary animate-spin" />
+                {isSpinnerActive ? (
+                  <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary animate-spin pointer-events-none" />
                 ) : (
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <button
+                    type="submit"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                    title="Search"
+                    aria-label="Search"
+                  >
+                    <Search className="h-4 w-4" />
+                  </button>
                 )}
                 <Input
                   ref={mobileInputRef}

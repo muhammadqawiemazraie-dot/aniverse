@@ -303,7 +303,14 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
         {country && <input type="hidden" name="country" value={country} />}
         
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <button
+            type="submit"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+            title="Submit search"
+            aria-label="Submit search"
+          >
+            <Search className="w-5 h-5" />
+          </button>
           <input
             type="search"
             name="q"
